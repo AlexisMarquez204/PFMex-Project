@@ -1,42 +1,308 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Segoe UI", sans-serif;
+}
+
+html, body {
+  scroll-behavior: smooth;
+  width: 100%;
+  overflow-x: hidden;
+}
+
 #root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.app {
+  width: 100%;
+}
+
+/* ================= NAVBAR ================= */
+
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 50px;
+  z-index: 1000;
+
+  backdrop-filter: blur(10px);
+
+  transition:
+    background-color 0.4s ease,
+    color 0.4s ease,
+    box-shadow 0.4s ease;
+}
+
+.navbar-blue {
+  background-color: rgba(10, 61, 98, 0.9);
+  color: white;
+  box-shadow: none;
+}
+
+.navbar-white {
+  background-color: rgba(255, 255, 255, 0.95);
+  color: #333;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
 }
 
 .logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+  font-size: 22px;
+  font-weight: bold;
+  color: #2ecc71;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
+/* Links */
+.nav-links {
+  display: flex;
+  gap: 25px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.nav-links li {
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.nav-links li:hover {
+  color: #2ecc71;
+}
+
+.navbar-blue .nav-links li {
+  color: white;
+}
+
+.navbar-white .nav-links li {
+  color: #333;
+}
+
+/* Botones del navbar */
+.nav-buttons {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+/* Botón principal */
+.btn-primary {
+  background-color: #2ecc71;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 6px;
+  color: white;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+  background-color: #27ae60;
+  transform: translateY(-2px);
+}
+
+/* Botón outline */
+.btn-outline {
+  background: transparent;
+  border: 2px solid #2ecc71;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: inherit;
+}
+
+.btn-outline:hover {
+  transform: translateY(-2px);
+}
+
+.btn-outline.btn-dark {
+  color: #333;
+  border-color: #333;
+}
+
+/* ================= SECCIONES ================= */
+
+.section {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 120px 80px 80px 80px; /* espacio para navbar fijo */
+  flex-wrap: wrap;
+  transition: background-color 0.5s;
+}
+
+/* ================= HERO ================= */
+
+.hero {
+  background: linear-gradient(135deg, #0a3d62, #1e6091);
+  color: white;
+}
+
+.hero-text {
+  flex: 1;
+  min-width: 300px;
+  margin-right: 20px;
+}
+
+.hero-text h1 {
+  font-size: 42px;
+  margin-bottom: 20px;
+}
+
+.hero-text p {
+  font-size: 18px;
+  margin-bottom: 20px;
+  color: #dcdcdc;
+}
+
+.large {
+  padding: 15px 30px;
+  font-size: 16px;
+}
+
+/* Card simulador */
+.loan-card {
+  flex: 1;
+  min-width: 280px;
+  max-width: 450px;
+  background-color: white;
+  color: #333;
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.loan-card h3 {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.loan-card label {
+  font-size: 14px;
+  margin-top: 10px;
+  display: block;
+}
+
+.loan-card input {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.full {
+  width: 100%;
+  margin-top: 15px;
+}
+
+/* ================= NOSOTROS y CONTACTO ================= */
+
+.nosotros, .contacto {
+  background: white;
+  color: #333;
+  flex-direction: column;
+  text-align: center;
+}
+
+.nosotros-content, .contacto-content {
+  max-width: 900px;
+  margin-top: 30px;
+  text-align: left;
+}
+
+.nosotros-content h2,
+.contacto-content h2 {
+  margin-top: 20px;
+  color: #0a3d62;
+}
+
+.nosotros-content ul,
+.contacto-content ul {
+  list-style: disc;
+  margin-left: 20px;
+}
+
+/* ================= ANIMACIONES ================= */
+
+.fade-in {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeInUp 1s forwards;
+}
+
+.fade-in.delay {
+  animation-delay: 0.5s;
+}
+
+.fade-in.delay-2 {
+  animation-delay: 1s;
+}
+
+@keyframes fadeInUp {
   to {
-    transform: rotate(360deg);
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
+/* ================= RESPONSIVE ================= */
+
+@media screen and (max-width: 1024px) {
+
+  .hero {
+    flex-direction: column;
+  }
+
+  .hero-text,
+  .loan-card {
+    width: 100%;
+    margin: 0 0 20px 0;
+  }
+
+  .nav-links {
+    justify-content: center;
+  }
+
+  .nav-buttons {
+    justify-content: center;
+    margin-top: 10px;
+  }
+
+  .section {
+    padding: 120px 30px 60px 30px;
   }
 }
 
-.card {
-  padding: 2em;
-}
+@media screen and (max-width: 600px) {
 
-.read-the-docs {
-  color: #888;
+  .hero-text h1 {
+    font-size: 32px;
+  }
+
+  .hero-text p {
+    font-size: 16px;
+  }
+
+  .loan-card {
+    padding: 20px;
+  }
+
+  .nosotros-content,
+  .contacto-content {
+    text-align: left;
+  }
 }
