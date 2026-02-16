@@ -1,3 +1,4 @@
+// src/FormPersonalData.jsx
 import React, { useState } from "react";
 import "./FormPersonalData.css";
 
@@ -7,6 +8,7 @@ function FormPersonalData() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [estado, setEstado] = useState("");
   const [errores, setErrores] = useState([]);
+  const [mensajeServidor, setMensajeServidor] = useState("");
 
   const estadosMexico = [
     "Aguascalientes", "Baja California", "Baja California Sur", "Campeche",
@@ -42,33 +44,36 @@ function FormPersonalData() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (validateForm()) {
-      const usuario = {
-        email: correo,
-        password: password,
-        state: estado
-      };
 
-      try {
-        const response = await fetch("http://localhost:8080/usuarios", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(usuario)
-        });
+    if (!validateForm()) return;
 
-        if (response.ok) {
-          const mensaje = await response.text();
-          alert(mensaje);
-          setCorreo("");
-          setPassword("");
-          setConfirmPassword("");
-          setEstado("");
-        } else {
-          console.error("Error al registrar usuario");
-        }
-      } catch (error) {
-        console.error("Error en fetch:", error);
+    const usuario = { email: correo, password: password, state: estado };
+    console.log("Enviando usuario:", usuario);
+
+    try {
+      const response = await fetch("http://localhost:8080/usuarios", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(usuario),
+      });
+
+      const texto = await response.text();
+      console.log("Status:", response.status, "Response:", texto);
+      setMensajeServidor(texto);
+
+      if (response.ok) {
+        alert("Alta exitosa: " + texto);
+        setCorreo("");
+        setPassword("");
+        setConfirmPassword("");
+        setEstado("");
+        setErrores([]);
+      } else {
+        alert("Error en el servidor: " + texto);
       }
+    } catch (error) {
+      console.error("Error en fetch:", error);
+      alert("No se pudo conectar con el servidor. Revisa la consola.");
     }
   };
 
@@ -86,10 +91,20 @@ function FormPersonalData() {
         <legend>Regístrate</legend>
 
         <label>Correo</label>
-        <input type="email" name="correo" value={correo} onChange={(e) => setCorreo(e.target.value)} />
+        <input
+          type="email"
+          name="correo"
+          value={correo}
+          onChange={(e) => setCorreo(e.target.value)}
+        />
 
         <label>Contraseña</label>
-        <input type="password" name="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+        <input
+          type="password"
+          name="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
 
         <div className="password-requirements">
           <p className={validations.length ? "valid" : ""}>Mínimo 8 caracteres</p>
@@ -100,15 +115,36 @@ function FormPersonalData() {
         </div>
 
         <label>Confirma tu contraseña</label>
-        <input type="password" name="confirmPassword" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
+        <input
+          type="password"
+          name="confirmPassword"
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
+        />
 
         <label>Selecciona tu estado de nacimiento</label>
-        <select name="estado" value={estado} onChange={(e) => setEstado(e.target.value)}>
+        <select
+          name="estado"
+          value={estado}
+          onChange={(e) => setEstado(e.target.value)}
+        >
           <option value="">-- Selecciona un estado --</option>
-          {estadosMexico.map((e) => <option key={e} value={e}>{e}</option>)}
+          {estadosMexico.map((e) => (
+            <option key={e} value={e}>
+              {e}
+            </option>
+          ))}
         </select>
 
-        {errores.map((err, index) => <div key={index} className="error-message">{err}</div>)}
+        {errores.map((err, index) => (
+          <div key={index} className="error-message">
+            {err}
+          </div>
+        ))}
+
+        {mensajeServidor && (
+          <div className="server-message">{mensajeServidor}</div>
+        )}
 
         <button type="submit">Registrar</button>
       </fieldset>
