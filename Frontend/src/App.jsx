@@ -1,7 +1,13 @@
 import { useRef, useEffect, useState } from "react";
+import React from "react";
 import "./App.css";
+import REACTDOM from "react-dom/client";
+import Formulario from "./components/FormPersonalData"
+import { useNavigate } from "react-router-dom";
 
 function App() {
+const navigate = useNavigate();
+
   const [navColor, setNavColor] = useState("blue");
 
   const [tipoPrestamo, setTipoPrestamo] = useState("personal");
@@ -111,8 +117,10 @@ function App() {
           <button className={`btn-outline ${navColor === "white" ? "btn-dark" : ""}`}>
             Login
           </button>
-          <button className="btn-primary">
+          <button className="btn-primary"
+          onClick={() => navigate("/formulario")}>
             Solicitar préstamo
+            
           </button>
         </div>
       </nav>
