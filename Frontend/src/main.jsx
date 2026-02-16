@@ -3,6 +3,8 @@ import ReactDOM from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import App from "./App";
 import Formulario from "./components/FormPersonalData";
+import Login from "./components/Login";
+
 
 const router = createBrowserRouter([
   {
@@ -12,7 +14,12 @@ const router = createBrowserRouter([
   {
     path: "/formulario",
     element: <Formulario />
-  }
+  },
+  {
+  path: "/login",
+  element: <Login />
+}
+
 ]);
 
 ReactDOM.createRoot(document.getElementById("root")).render(

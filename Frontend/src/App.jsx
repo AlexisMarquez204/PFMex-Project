@@ -114,7 +114,7 @@ const navigate = useNavigate();
           </li>
         </ul>
         <div className="nav-buttons">
-          <button className={`btn-outline ${navColor === "white" ? "btn-dark" : ""}`}>
+          <button className={`btn-outline ${navColor === "white" ? "btn-dark" : ""}`} onClick={() => navigate("/login")}>
             Login
           </button>
           <button className="btn-primary"
