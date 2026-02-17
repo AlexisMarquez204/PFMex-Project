@@ -22,8 +22,8 @@ const navigate = useNavigate();
 
   const configuracionPrestamo = {
     personal: { minimo: 200, tasa: 0.07 },
-    negocio: { minimo: 10000, tasa: 0.08 },
-    hipotecario: { minimo: 50000, tasa: 0.09 },
+    negocio: { minimo: 50000, tasa: 0.08 },
+    hipotecario: { minimo: 750000, tasa: 0.09 },
   };
 
   const configActual = configuracionPrestamo[tipoPrestamo];
