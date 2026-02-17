@@ -28,8 +28,8 @@ function Login() {
 
         <button 
           className="btn-register"
-          onClick={() => navigate("/registro")}
-        >
+          onClick={() => navigate("/formulario")}
+          >
           ¿No tienes cuenta?
         </button>
 
