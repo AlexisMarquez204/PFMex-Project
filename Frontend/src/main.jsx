@@ -4,6 +4,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import App from "./App";
 import Formulario from "./components/FormPersonalData";
 import Login from "./components/Login";
+import UserDashboard from "./components/UserDashboard";
 
 
 const router = createBrowserRouter([
@@ -18,6 +19,10 @@ const router = createBrowserRouter([
   {
   path: "/login",
   element: <Login />
+},
+{
+  path: "/userDashboard",
+  element: <UserDashboard />
 }
 
 ]);
