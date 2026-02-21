@@ -1,52 +1,43 @@
 package com.example.main.Dao;
 
 import java.sql.*;
-import java.util.*;
 
 import com.example.main.connection.Conexion;
-import com.example.main.model.PojoUserData;
 
-public class DaoUserData extends Conexion{
+public class DaoUserData extends Conexion {
 
-    
-    
-    public boolean UploadDataUser(String getEmail, String getPassword, String getState){
+    /**
+     * Registra un nuevo usuario en la tabla "usuario".
+     * Genera automáticamente el no_cuenta (RF-05).
+     *
+     * @return id del usuario recién creado, o -1 si hubo error.
+     */
+    public int insertarUsuario(String email, String password, String estado) {
 
-        String sql = "INSERT INTO usuario (email, password, estado) VALUES (?,?,?)";
-        
+        // Generación de número de cuenta único (RF-05): PFM + timestamp
+        String noCuenta = "PFM" + System.currentTimeMillis();
+
+        String sql = "INSERT INTO usuario (email, password, no_cuenta, estado) " +
+                     "VALUES (?, ?, ?, ?) RETURNING id";
+
         try {
-            //Generacion de objeto de la clase Pojo
-            PojoUserData ObjGetVar = new PojoUserData();
-            //Asignacion de parametros
-            ObjGetVar.setEmail(getEmail);
-            ObjGetVar.setPassword(getPassword);
-            ObjGetVar.setState(getState);
+            PreparedStatement ps = connectionSQL.prepareStatement(sql);
+            ps.setString(1, email);
+            ps.setString(2, password);
+            ps.setString(3, noCuenta);
+            ps.setString(4, estado);
 
-            //Creacion del PreparedStatement para las operaciones sql
-            PreparedStatement PS = connectionSQL.prepareStatement(sql);
-
-            //Asigancion de parametros para la BD
-            PS.setString(1, ObjGetVar.getEmail());
-            PS.setString(2, ObjGetVar.getPassword());
-            PS.setString(3, ObjGetVar.getState());
-
-            //Actuador para iniciar la alta
-           boolean Upload =PS.execute();
-           Upload = true;
-           //validacion simple
-           if (Upload==true) {
-            System.out.println("Alta exitosa");
-           }else{
-            System.out.println("Error al registrar");
-           }
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                int idGenerado = rs.getInt("id");
+                System.out.println("Usuario registrado. ID: " + idGenerado + " | Cuenta: " + noCuenta);
+                return idGenerado;
+            }
 
         } catch (SQLException e) {
-           System.out.println("Ocurrio un error: "+e 
-           +"Error en: "+e.getErrorCode()
-           +"\n Mensaje: "+e.getLocalizedMessage());
-           
+            System.out.println("Error al insertar usuario: " + e.getMessage());
         }
-        return true;
-        
+
+        return -1; // Error
     }
 }

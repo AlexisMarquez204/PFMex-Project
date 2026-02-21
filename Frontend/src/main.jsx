@@ -5,7 +5,7 @@ import App from "./App";
 import Formulario from "./components/FormPersonalData";
 import Login from "./components/Login";
 import UserDashboard from "./components/UserDashboard";
-
+import FormSocioeconomico from "./components/FormSocioeconomico";
 
 const router = createBrowserRouter([
   {
@@ -17,14 +17,17 @@ const router = createBrowserRouter([
     element: <Formulario />
   },
   {
-  path: "/login",
-  element: <Login />
-},
-{
-  path: "/userDashboard",
-  element: <UserDashboard />
-}
-
+    path: "/login",
+    element: <Login />
+  },
+  {
+    path: "/userDashboard",
+    element: <UserDashboard />
+  },
+  {
+    path: "/socioeconomico",
+    element: <FormSocioeconomico />
+  }
 ]);
 
 ReactDOM.createRoot(document.getElementById("root")).render(
