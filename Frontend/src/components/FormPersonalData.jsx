@@ -1,8 +1,10 @@
 // src/FormPersonalData.jsx
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "./FormPersonalData.css";
 
 function FormPersonalData() {
+  const navigate = useNavigate();
   const [correo, setCorreo] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -57,19 +59,21 @@ function FormPersonalData() {
         body: JSON.stringify(usuario),
       });
 
-      const texto = await response.text();
-      console.log("Status:", response.status, "Response:", texto);
-      setMensajeServidor(texto);
+      const data = await response.json();
+      console.log("Status:", response.status, "Response:", data);
+      setMensajeServidor(data.mensaje);
 
       if (response.ok) {
-        alert("Alta exitosa: " + texto);
+        alert("Alta exitosa. Número de cuenta generado.");
         setCorreo("");
         setPassword("");
         setConfirmPassword("");
         setEstado("");
         setErrores([]);
+        // Redirigir al formulario socioeconómico pasando el id del usuario (RF-06, RF-07)
+        navigate(`/socioeconomico?userId=${data.id}`);
       } else {
-        alert("Error en el servidor: " + texto);
+        alert("Error en el servidor: " + data.mensaje);
       }
     } catch (error) {
       console.error("Error en fetch:", error);
