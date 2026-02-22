@@ -1,3 +1,4 @@
+// src/components/FormDatosPersonales.jsx
 import React, { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import "./FormDatosPersonales.css";
@@ -5,11 +6,9 @@ import "./FormDatosPersonales.css";
 function FormDatosPersonales() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-
-  // Obtener idUsuario desde la URL
   const idUsuario = parseInt(searchParams.get("userId") || "0", 10);
 
-  // --- ESTADOS: DATOS PERSONALES ---
+  // ── DATOS PERSONALES ─────────────────────────
   const [nombre, setNombre] = useState("");
   const [apellidoPaterno, setApellidoPaterno] = useState("");
   const [apellidoMaterno, setApellidoMaterno] = useState("");
@@ -17,7 +16,7 @@ function FormDatosPersonales() {
   const [telefono, setTelefono] = useState("");
   const [estadoCivil, setEstadoCivil] = useState("");
 
-  // --- ESTADOS: DIRECCIÓN (Nueva Tabla) ---
+  // ── DIRECCIÓN ─────────────────────────
   const [provincia, setProvincia] = useState("");
   const [ciudad, setCiudad] = useState("");
   const [localizacion, setLocalizacion] = useState("");
@@ -26,36 +25,31 @@ function FormDatosPersonales() {
 
   const [errores, setErrores] = useState([]);
   const [mensajeServidor, setMensajeServidor] = useState("");
-  const [cargando, setCargando] = useState(false);
+  const [enviando, setEnviando] = useState(false);
 
-  // Validación del formulario completo
   const validateForm = () => {
-    const erroresTemp = [];
+    const errs = [];
 
-    // Validar Datos Personales
-    if (!nombre) erroresTemp.push("El nombre es obligatorio.");
-    if (!apellidoPaterno) erroresTemp.push("El apellido paterno es obligatorio.");
-    if (!fechaNacimiento) erroresTemp.push("La fecha de nacimiento es obligatoria.");
-    if (!estadoCivil) erroresTemp.push("Debes seleccionar un estado civil.");
+    if (!nombre) errs.push("El nombre es obligatorio.");
+    if (!apellidoPaterno) errs.push("El apellido paterno es obligatorio.");
+    if (!fechaNacimiento) errs.push("La fecha de nacimiento es obligatoria.");
+    if (!estadoCivil) errs.push("Debes seleccionar un estado civil.");
+    if (!provincia) errs.push("La provincia es obligatoria.");
+    if (!ciudad) errs.push("La ciudad es obligatoria.");
+    if (!codigoPostal) errs.push("El código postal es obligatorio.");
+    if (!idUsuario) errs.push("No se recibió el ID del usuario.");
 
-    // Validar Dirección
-    if (!provincia) erroresTemp.push("La provincia es obligatoria.");
-    if (!ciudad) erroresTemp.push("La ciudad es obligatoria.");
-    if (!codigoPostal) erroresTemp.push("El código postal es obligatorio.");
-
-    if (!idUsuario) erroresTemp.push("No se recibió el ID del usuario.");
-
-    setErrores(erroresTemp);
-    return erroresTemp.length === 0;
+    setErrores(errs);
+    return errs.length === 0;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
 
-    setCargando(true);
+    setEnviando(true);
+    setMensajeServidor("");
 
-    // Estructura que incluye ambas tablas
     const payload = {
       datosPersonales: {
         id_usuario: idUsuario,
@@ -84,90 +78,133 @@ function FormDatosPersonales() {
       });
 
       const data = await response.json();
-      setMensajeServidor(data.mensaje);
 
       if (response.ok) {
-        alert("Información guardada correctamente.");
+        setMensajeServidor("✓ " + data.mensaje);
         navigate(`/socioeconomico?userId=${idUsuario}`);
       } else {
-        alert("Error: " + data.mensaje);
+        setMensajeServidor("Error: " + data.mensaje);
       }
     } catch (error) {
       console.error("Error:", error);
-      alert("No se pudo conectar con el servidor.");
+      setMensajeServidor("No se pudo conectar con el servidor.");
     } finally {
-      setCargando(false);
+      setEnviando(false);
     }
   };
 
   return (
-    <div className="form-container">
-      <form onSubmit={handleSubmit}>
-        <legend>Registro de Información</legend>
+    <div className="socio-wrapper">
+      <div className="socio-card">
 
-        <div className="form-content-wrapper">
-          {/* COLUMNA IZQUIERDA: Datos Personales */}
-          <fieldset className="form-section">
-            <h3>Datos Personales</h3>
-            
-            <label>Nombre</label>
-            <input type="text" value={nombre} onChange={(e) => setNombre(e.target.value)} />
-
-            <label>Apellido Paterno</label>
-            <input type="text" value={apellidoPaterno} onChange={(e) => setApellidoPaterno(e.target.value)} />
-
-            <label>Apellido Materno</label>
-            <input type="text" value={apellidoMaterno} onChange={(e) => setApellidoMaterno(e.target.value)} />
-
-            <label>Fecha de Nacimiento</label>
-            <input type="date" value={fechaNacimiento} onChange={(e) => setFechaNacimiento(e.target.value)} />
-
-            <label>Teléfono</label>
-            <input type="text" value={telefono} onChange={(e) => setTelefono(e.target.value)} />
-
-            <label>Estado Civil</label>
-            <select value={estadoCivil} onChange={(e) => setEstadoCivil(e.target.value)}>
-              <option value="">-- Selecciona --</option>
-              <option value="Soltero">Soltero</option>
-              <option value="Casado">Casado</option>
-              <option value="Divorciado">Divorciado</option>
-              <option value="Viudo">Viudo</option>
-            </select>
-          </fieldset>
-
-          {/* COLUMNA DERECHA: Dirección */}
-          <fieldset className="form-section">
-            <h3>Dirección</h3>
-
-            <label>Provincia / Estado</label>
-            <input type="text" value={provincia} onChange={(e) => setProvincia(e.target.value)} />
-
-            <label>Ciudad</label>
-            <input type="text" value={ciudad} onChange={(e) => setCiudad(e.target.value)} />
-
-            <label>Calle / Localización</label>
-            <input type="text" value={localizacion} onChange={(e) => setLocalizacion(e.target.value)} />
-
-            <label>Código Postal</label>
-            <input type="text" value={codigoPostal} onChange={(e) => setCodigoPostal(e.target.value)} />
-
-            <label>Número</label>
-            <input type="text" value={numero} onChange={(e) => setNumero(e.target.value)} />
-          </fieldset>
+        <div className="socio-header">
+          <div className="progress-bar"><div className="progress-fill" style={{ width: "50%" }} /></div>
+          <h2>Datos Personales</h2>
+          <p>Paso 2 de 4 — Completa tu información personal y de domicilio.</p>
         </div>
 
-        <div className="form-footer">
-          {errores.map((err, index) => (
-            <div key={index} className="error-message">{err}</div>
-          ))}
+        <form onSubmit={handleSubmit}>
+          <div className="socio-body">
 
-          {mensajeServidor && <div className="server-message">{mensajeServidor}</div>}
+            {/* DATOS PERSONALES */}
+            <div className="row">
+              <div className="field">
+                <label>Nombre <span className="req">*</span></label>
+                <input type="text" value={nombre} onChange={(e) => setNombre(e.target.value)} />
+              </div>
 
-          <button type="submit" disabled={cargando}>
-            {cargando ? "Guardando..." : "Guardar y continuar"}
-          </button>
-        </div>
-      </form>
+              <div className="field">
+                <label>Apellido Paterno <span className="req">*</span></label>
+                <input type="text" value={apellidoPaterno} onChange={(e) => setApellidoPaterno(e.target.value)} />
+              </div>
+            </div>
+
+            <div className="row">
+              <div className="field">
+                <label>Apellido Materno</label>
+                <input type="text" value={apellidoMaterno} onChange={(e) => setApellidoMaterno(e.target.value)} />
+              </div>
+
+              <div className="field">
+                <label>Fecha de Nacimiento <span className="req">*</span></label>
+                <input type="date" value={fechaNacimiento} onChange={(e) => setFechaNacimiento(e.target.value)} />
+              </div>
+            </div>
+
+            <div className="row">
+              <div className="field">
+                <label>Teléfono</label>
+                <input type="text" value={telefono} onChange={(e) => setTelefono(e.target.value)} />
+              </div>
+
+              <div className="field">
+                <label>Estado Civil <span className="req">*</span></label>
+                <select value={estadoCivil} onChange={(e) => setEstadoCivil(e.target.value)}>
+                  <option value="">-- Selecciona --</option>
+                  <option>Soltero</option>
+                  <option>Casado</option>
+                  <option>Divorciado</option>
+                  <option>Viudo</option>
+                </select>
+              </div>
+            </div>
+
+            {/* DIRECCIÓN */}
+            <div className="row">
+              <div className="field">
+                <label>Provincia / Estado <span className="req">*</span></label>
+                <input type="text" value={provincia} onChange={(e) => setProvincia(e.target.value)} />
+              </div>
+
+              <div className="field">
+                <label>Ciudad <span className="req">*</span></label>
+                <input type="text" value={ciudad} onChange={(e) => setCiudad(e.target.value)} />
+              </div>
+            </div>
+
+            <div className="row">
+              <div className="field">
+                <label>Calle / Localización</label>
+                <input type="text" value={localizacion} onChange={(e) => setLocalizacion(e.target.value)} />
+              </div>
+
+              <div className="field">
+                <label>Código Postal <span className="req">*</span></label>
+                <input type="text" value={codigoPostal} onChange={(e) => setCodigoPostal(e.target.value)} />
+              </div>
+            </div>
+
+            <div className="row">
+              <div className="field">
+                <label>Número</label>
+                <input type="text" value={numero} onChange={(e) => setNumero(e.target.value)} />
+              </div>
+            </div>
+
+            {errores.length > 0 && (
+              <div className="error-list">
+                {errores.map((err, i) => <p key={i}>• {err}</p>)}
+              </div>
+            )}
+
+            {mensajeServidor && (
+              <div className="server-message">{mensajeServidor}</div>
+            )}
+
+          </div>
+
+          <div className="socio-footer">
+            <button type="button" className="btn-back" onClick={() => navigate(-1)}>
+              ← Regresar
+            </button>
+
+            <button type="submit" className="btn-submit" disabled={enviando}>
+              {enviando ? "Guardando..." : "Continuar →"}
+            </button>
+          </div>
+        </form>
+
+      </div>
     </div>
   );
 }
