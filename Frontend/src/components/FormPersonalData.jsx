@@ -71,7 +71,7 @@ function FormPersonalData() {
         setEstado("");
         setErrores([]);
         // Redirigir al formulario socioeconómico pasando el id del usuario (RF-06, RF-07)
-        navigate(`/socioeconomico?userId=${data.id}`);
+        navigate(`/datospersonales?userId=${data.id}`);
       } else {
         alert("Error en el servidor: " + data.mensaje);
       }

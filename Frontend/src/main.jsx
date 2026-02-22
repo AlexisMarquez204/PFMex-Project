@@ -6,6 +6,7 @@ import Formulario from "./components/FormPersonalData";
 import Login from "./components/Login";
 import UserDashboard from "./components/UserDashboard";
 import FormSocioeconomico from "./components/FormSocioeconomico";
+import FormDatosPersonales from "./components/FormDatosPersonales";
 
 const router = createBrowserRouter([
   {
@@ -27,6 +28,10 @@ const router = createBrowserRouter([
   {
     path: "/socioeconomico",
     element: <FormSocioeconomico />
+  },
+  {
+     path: "/datospersonales",
+    element: <FormDatosPersonales /> 
   }
 ]);
 
