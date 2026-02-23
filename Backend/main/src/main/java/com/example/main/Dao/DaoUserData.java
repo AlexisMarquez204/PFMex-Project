@@ -1,52 +1,56 @@
 package com.example.main.Dao;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.*;
-import java.util.*;
-
 import com.example.main.connection.Conexion;
-import com.example.main.model.PojoUserData;
 
-public class DaoUserData extends Conexion{
-
+public class DaoUserData extends Conexion {
     
-    
-    public boolean UploadDataUser(String getEmail, String getPassword, String getState){
+                    //////////////////////////////////
+                    ///////     Hash MD5     ////////
+                    /// /////////////////////////////
 
-        String sql = "INSERT INTO usuario (email, password, estado) VALUES (?,?,?)";
-        
+    public static String generarMD5(String texto) {
         try {
-            //Generacion de objeto de la clase Pojo
-            PojoUserData ObjGetVar = new PojoUserData();
-            //Asignacion de parametros
-            ObjGetVar.setEmail(getEmail);
-            ObjGetVar.setPassword(getPassword);
-            ObjGetVar.setState(getState);
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            byte[] hashBytes = md.digest(texto.getBytes());
 
-            //Creacion del PreparedStatement para las operaciones sql
-            PreparedStatement PS = connectionSQL.prepareStatement(sql);
-
-            //Asigancion de parametros para la BD
-            PS.setString(1, ObjGetVar.getEmail());
-            PS.setString(2, ObjGetVar.getPassword());
-            PS.setString(3, ObjGetVar.getState());
-
-            //Actuador para iniciar la alta
-           boolean Upload =PS.execute();
-           Upload = true;
-           //validacion simple
-           if (Upload==true) {
-            System.out.println("Alta exitosa");
-           }else{
-            System.out.println("Error al registrar");
-           }
-
-        } catch (SQLException e) {
-           System.out.println("Ocurrio un error: "+e 
-           +"Error en: "+e.getErrorCode()
-           +"\n Mensaje: "+e.getLocalizedMessage());
-           
+            StringBuilder hash = new StringBuilder();
+            for (byte b : hashBytes) {
+                hash.append(String.format("%02x", b));
+            }
+            return hash.toString();
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException("Error al generar el hash", e);
         }
-        return true;
-        
     }
+
+    // Inserta usuario y devuelve el ID generado
+    public int UploadDataUserAndReturnId(String email, String password, String state) {
+        int generatedId = -1;
+        String sql = "INSERT INTO usuario (email, password, estado) VALUES (?, ?, ?)";
+
+        String passMD5 = generarMD5(password);
+
+        try {
+            PreparedStatement ps = connectionSQL.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            ps.setString(1, email);
+            ps.setString(2, passMD5);
+            ps.setString(3, state);
+
+            int rowsAffected = ps.executeUpdate();
+            if (rowsAffected > 0) {
+                ResultSet rs = ps.getGeneratedKeys();
+                if (rs.next()) {
+                    generatedId = rs.getInt(1);
+                    System.out.println("Alta exitosa, ID: " + generatedId);
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Ocurrió un error: " + e.getMessage());
+        }
+        return generatedId;
+    }
+
 }

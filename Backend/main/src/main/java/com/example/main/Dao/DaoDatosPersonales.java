@@ -4,28 +4,18 @@ import java.sql.*;
 import com.example.main.connection.Conexion;
 import com.example.main.model.PojoDatosPersonales;
 import com.example.main.model.PojoDireccion;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public class DaoDatosPersonales extends Conexion {
 
-    /**
-     * Inserta tanto Datos Personales como Dirección en una sola transacción.
-     * Devuelve true si ambos se guardaron con éxito.
-     */
     public boolean insertarRegistroCompleto(PojoDatosPersonales datos, PojoDireccion direccion) {
-        
-        String sqlDatos = "INSERT INTO datos_personales " +
-                          "(id_usuario, nombre, apellido_paterno, apellido_materno, fecha_nacimiento, telefono, estado_civil) " +
-                          "VALUES (?, ?, ?, ?, ?, ?, ?)";
-        
-        String sqlDireccion = "INSERT INTO direccion " +
-                             "(id_usuario, provincia, ciudad, localizacion, codigo_postal, numero) " +
-                             "VALUES (?, ?, ?, ?, ?, ?)";
+        String sqlDatos = "INSERT INTO datos_personales (id_usuario, nombre, apellido_paterno, apellido_materno, fecha_nacimiento, telefono, estado_civil) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String sqlDireccion = "INSERT INTO direccion (id_usuario, provincia, ciudad, localizacion, codigo_postal, numero) VALUES (?, ?, ?, ?, ?, ?)";
 
         try {
-            // 1. Desactivamos el auto-commit para manejar la transacción manualmente
             connectionSQL.setAutoCommit(false);
 
-            // 2. INSERTAR DATOS PERSONALES
             PreparedStatement psDatos = connectionSQL.prepareStatement(sqlDatos);
             psDatos.setInt(1, datos.getId_usuario());
             psDatos.setString(2, datos.getNombre());
@@ -36,7 +26,6 @@ public class DaoDatosPersonales extends Conexion {
             psDatos.setString(7, datos.getEstado_civil());
             psDatos.executeUpdate();
 
-            // 3. INSERTAR DIRECCIÓN
             PreparedStatement psDir = connectionSQL.prepareStatement(sqlDireccion);
             psDir.setInt(1, direccion.getId_usuario());
             psDir.setString(2, direccion.getProvincia());
@@ -46,29 +35,23 @@ public class DaoDatosPersonales extends Conexion {
             psDir.setString(6, direccion.getNumero());
             psDir.executeUpdate();
 
-            // 4. Si todo salió bien, confirmamos los cambios en la DB
             connectionSQL.commit();
             return true;
 
         } catch (SQLException e) {
-            // 5. Si algo falló, deshacemos todo para no dejar datos inconsistentes
             try {
-                if (connectionSQL != null) {
-                    connectionSQL.rollback();
-                    System.out.println("Transacción deshecha (Rollback) debido a: " + e.getMessage());
-                }
+                if (connectionSQL != null) connectionSQL.rollback();
             } catch (SQLException ex) {
-                System.out.println("Error en rollback: " + ex.getMessage());
+                ex.printStackTrace();
             }
+            e.printStackTrace();
+            return false;
         } finally {
-            // 6. Siempre volvemos a dejar el auto-commit en true por seguridad
             try {
                 connectionSQL.setAutoCommit(true);
             } catch (SQLException e) {
                 e.printStackTrace();
             }
         }
-
-        return false;
     }
 }

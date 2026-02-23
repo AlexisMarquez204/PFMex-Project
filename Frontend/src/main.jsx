@@ -7,6 +7,7 @@ import Login from "./components/Login";
 import UserDashboard from "./components/UserDashboard";
 import FormSocioeconomico from "./components/FormSocioeconomico";
 import FormDatosPersonales from "./components/FormDatosPersonales";
+import FormTipoCuenta from "./components/FormTipoCuenta"
 
 const router = createBrowserRouter([
   {
@@ -32,6 +33,10 @@ const router = createBrowserRouter([
   {
      path: "/datospersonales",
     element: <FormDatosPersonales /> 
+  },
+  {
+    path: "/tipocuenta",
+    element: <FormTipoCuenta />
   }
 ]);
 
