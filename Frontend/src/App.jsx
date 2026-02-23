@@ -1,12 +1,11 @@
 import { useRef, useEffect, useState } from "react";
 import React from "react";
 import "./App.css";
-import REACTDOM from "react-dom/client";
-import Formulario from "./components/FormPersonalData"
+import Formulario from "./components/FormPersonalData";
 import { useNavigate } from "react-router-dom";
 
 function App() {
-const navigate = useNavigate();
+  const navigate = useNavigate();
 
   const [navColor, setNavColor] = useState("blue");
 
@@ -15,6 +14,10 @@ const navigate = useNavigate();
   const [plazo, setPlazo] = useState("");
   const [errorMonto, setErrorMonto] = useState("");
   const [resultado, setResultado] = useState(null);
+
+  // 🔥 ESTADOS DEL MODAL
+  const [mostrarAviso, setMostrarAviso] = useState(false);
+  const [aceptado, setAceptado] = useState(false);
 
   const heroRef = useRef(null);
   const nosotrosRef = useRef(null);
@@ -93,6 +96,24 @@ const navigate = useNavigate();
     });
   };
 
+  // 🔥 FUNCIONES DEL MODAL
+  const abrirAviso = () => {
+    setMostrarAviso(true);
+  };
+
+  const cerrarAviso = () => {
+    setMostrarAviso(false);
+    setAceptado(false);
+  };
+
+  const aceptarAviso = () => {
+    if (aceptado) {
+      setMostrarAviso(false);
+      setAceptado(false);
+      navigate("/formulario");
+    }
+  };
+
   return (
     <div className="app">
       {/* NAVBAR */}
@@ -102,6 +123,7 @@ const navigate = useNavigate();
         }`}
       >
         <div className="logo">PFMex</div>
+
         <ul className="nav-links">
           <li onClick={() => heroRef.current.scrollIntoView({ behavior: "smooth" })}>
             Inicio
@@ -113,14 +135,17 @@ const navigate = useNavigate();
             Contacto
           </li>
         </ul>
+
         <div className="nav-buttons">
-          <button className={`btn-outline ${navColor === "white" ? "btn-dark" : ""}`} onClick={() => navigate("/login")}>
+          <button
+            className={`btn-outline ${navColor === "white" ? "btn-dark" : ""}`}
+            onClick={() => navigate("/login")}
+          >
             Login
           </button>
-          <button className="btn-primary"
-          onClick={() => navigate("/formulario")}>
+
+          <button className="btn-primary" onClick={abrirAviso}>
             Solicitar préstamo
-            
           </button>
         </div>
       </nav>
@@ -132,7 +157,7 @@ const navigate = useNavigate();
           <p>
             Obtén financiamiento en minutos con tasas competitivas y aprobación digital.
           </p>
-          <button className="btn-primary large">
+          <button className="btn-primary large" onClick={abrirAviso}>
             Continuar con el Préstamo
           </button>
         </div>
@@ -141,6 +166,7 @@ const navigate = useNavigate();
           <h3>Simula tu préstamo</h3>
 
           <label>Tipo de préstamo</label>
+
           <div className="radio-group">
             <label>
               <input
@@ -221,53 +247,56 @@ const navigate = useNavigate();
         </div>
       </section>
 
-      {/* NOSOTROS */}
-      <section ref={nosotrosRef} className="section nosotros">
-        <h1 className="fade-in">Nosotros</h1>
-        <p className="fade-in delay">
-          PFMex es líder en soluciones financieras digitales. Nuestra misión es brindar
-          acceso rápido y seguro a préstamos personales y para negocios.
-        </p>
+      {/* MODAL */}
+      {mostrarAviso && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <h2>Aviso de Privacidad</h2>
 
-        <div className="nosotros-content fade-in delay-2">
-          <h2>Nuestros valores</h2>
-          <ul>
-            <li>Transparencia en cada operación</li>
-            <li>Rapidez en la aprobación de préstamos</li>
-            <li>Seguridad de tus datos y operaciones</li>
-            <li>Atención personalizada y soporte 24/7</li>
-          </ul>
+            <div className="modal-content">
+              <p>
+                En PFMex recopilamos y tratamos sus datos personales conforme
+                a la Ley Federal de Protección de Datos Personales.
+              </p>
 
-          <h2>Nuestra historia</h2>
-          <p>
-            Desde 2026, PFMex ayudará a miles de clientes a cumplir sus metas
-            financieras, ofreciendo soluciones digitales innovadoras y confiables.
-          </p>
+              <ul>
+                <li>Uso de datos para evaluación crediticia</li>
+                <li>Protección y resguardo seguro de información</li>
+                <li>No compartimos datos sin consentimiento</li>
+              </ul>
+
+              <label className="check-container">
+                <input
+                  type="checkbox"
+                  checked={aceptado}
+                  onChange={(e) => setAceptado(e.target.checked)}
+                />
+                Acepto el <a 
+                  href="/Aviso_de_Privacidad_PFMex.pdf" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                >
+                  aviso de privacidad
+                </a>
+              </label>
+            </div>
+
+            <div className="modal-buttons">
+              <button className="btn-outline" onClick={cerrarAviso}>
+                Rechazar
+              </button>
+
+              <button
+                className="btn-primary"
+                disabled={!aceptado}
+                onClick={aceptarAviso}
+              >
+                Aceptar
+              </button>
+            </div>
+          </div>
         </div>
-      </section>
-
-      {/* CONTACTO */}
-      <section ref={contactoRef} className="section contacto">
-        <h1 className="fade-in">Contacto</h1>
-        <p className="fade-in delay">
-          Escríbenos a PFMex@banco.com o llámanos al +52 5658690768.
-        </p>
-
-        <div className="contacto-content fade-in delay-2">
-          <h2>Ubicación</h2>
-          <p>Calle Principal 123, Estado de México, México</p>
-
-          <h2>Redes sociales</h2>
-          <ul>
-            <li>Facebook: /PFMex</li>
-            <li>Twitter: @PFMex</li>
-            <li>LinkedIn: /company/PFMex</li>
-          </ul>
-
-          <h2>Horario de atención</h2>
-          <p>Lunes a Viernes: 9:00 AM - 6:00 PM</p>
-        </div>
-      </section>
+      )}
     </div>
   );
 }
