@@ -11,7 +11,7 @@ public class Conexion {
     /// Variables necesarias para la conexion a bd////
     ///////////////////////////////////////////////////////////////////
     public String user = "postgres";
-    public String pass = "1234";
+    public String pass = "root";
     public String database = "pfmex";
     public String url = "jdbc:postgresql://localhost:5432/" + database;
     ////////////////////////////////////////////////////////////////////

@@ -62,15 +62,24 @@ function Login() {
         }),
       });
 
-      const data = await response.json();
+  const data = await response.json();
+      
+         console.log("DATA BACKEND:", data);
+         console.log("NEXT:", data.next);
 
-      if (response.ok) {
-        console.log("✅ Login exitoso:", data);
-        localStorage.setItem("usuario", JSON.stringify(data.usuario || data));
-        navigate("/datospersonales");
-      } else {
-        setError(data.mensaje || "Error al iniciar sesión");
-      }
+
+         if (response.ok) {
+         localStorage.setItem("usuario", JSON.stringify(data.usuario || data));
+         localStorage.setItem("isAuth", "true");
+
+          if (data.next === "DATOS_PERSONALES") {
+                 navigate("/datospersonales");
+          }else {
+                 navigate("/userDashboard");
+          }
+         } else {
+                 setError(data.mensaje || "Error al iniciar sesión");
+    }
     } catch (error) {
       console.error("Error de conexión:", error);
       setError("No se pudo conectar con el servidor");
