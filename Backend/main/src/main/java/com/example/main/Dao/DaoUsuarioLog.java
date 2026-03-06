@@ -11,6 +11,7 @@ public class DaoUsuarioLog {
         public String email;
         public String password;
     }
+    
 
     public UsuarioDB buscarPorEmail(String email) throws SQLException {
         Conexion cx = new Conexion();
