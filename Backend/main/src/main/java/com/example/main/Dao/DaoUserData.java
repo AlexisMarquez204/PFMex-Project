@@ -11,6 +11,21 @@ public class DaoUserData extends Conexion {
                     ///////     Hash MD5     ////////
                     /// /////////////////////////////
 
+                     public static String genearMD5(String texto){
+        try {
+        MessageDigest md = MessageDigest.getInstance("MD5");
+        byte [] hashBytes = md.digest(texto.getBytes());
+        
+        StringBuilder hash = new StringBuilder();
+            for (byte b: hashBytes) {
+                hash.append(String.format("%02x", b));
+            }
+            return hash.toString();
+        } catch (Exception e) {
+        throw new RuntimeException("Error al generar el hash MD5", e);
+        }
+    } 
+
     
 
     // Inserta usuario y devuelve el ID generado
@@ -18,11 +33,11 @@ public class DaoUserData extends Conexion {
         int generatedId = -1;
         String sql = "INSERT INTO usuario (email, password, estado) VALUES (?, ?, ?)";
 
-
+        String contraHash = genearMD5(password);
         try {
             PreparedStatement ps = connectionSQL.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             ps.setString(1, email);
-            ps.setString(2, password);
+            ps.setString(2, contraHash);
             ps.setString(3, state);
 
             int rowsAffected = ps.executeUpdate();

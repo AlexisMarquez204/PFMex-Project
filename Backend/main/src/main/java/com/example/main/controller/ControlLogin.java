@@ -7,9 +7,11 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.util.HashMap;
-import java.util.Map;
+import java.util.Map; 
 
 @RestController
 public class ControlLogin {
@@ -30,8 +32,9 @@ public class ControlLogin {
                 return ResponseEntity.status(401).body(Map.of("mensaje", "Credenciales inválidas"));
             }
 
-            
-            if (!req.password.equals(user.password)) {
+            // Hashear la contraseña recibida con MD5 y comparar con la almacenada
+            String hashedPassword = hashMD5(req.password);
+            if (!hashedPassword.equalsIgnoreCase(user.password)) {
                 return ResponseEntity.status(401).body(Map.of("mensaje", "Credenciales inválidas"));
             }
 
@@ -44,7 +47,6 @@ public class ControlLogin {
             usuario.put("email", user.email);
             session.setAttribute("USER", usuario);
 
-            
             Map<String, Object> resp = new HashMap<>();
             resp.put("mensaje", "Login correcto");
             resp.put("usuario", usuario);
@@ -55,7 +57,23 @@ public class ControlLogin {
         } catch (SQLException e) {
             e.printStackTrace();
             return ResponseEntity.status(500).body(Map.of("mensaje", "Error al consultar la BD"));
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body(Map.of("mensaje", "Error interno al procesar la contraseña"));
         }
+    }
+
+    // Método para hashear una cadena a MD5
+    private String hashMD5(String input) throws NoSuchAlgorithmException {
+        MessageDigest md = MessageDigest.getInstance("MD5");
+        byte[] messageDigest = md.digest(input.getBytes());
+        StringBuilder hexString = new StringBuilder();
+        for (byte b : messageDigest) {
+            String hex = Integer.toHexString(0xff & b);
+            if (hex.length() == 1) hexString.append('0');
+            hexString.append(hex);
+        }
+        return hexString.toString();
     }
 
     //verificar sesión desde React

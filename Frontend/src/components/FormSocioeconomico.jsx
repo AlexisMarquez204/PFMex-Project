@@ -1,4 +1,3 @@
-// src/components/FormSocioeconomico.jsx
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./FormSocioeconomico.css";
@@ -6,7 +5,7 @@ import "./FormSocioeconomico.css";
 function FormSocioeconomico() {
   const navigate = useNavigate();
 
-  // Estados del formulario
+  // Estados del formulario base
   const [nivelEstudios, setNivelEstudios] = useState("");
   const [situacionLaboral, setSituacionLaboral] = useState("");
   const [ingresoMensual, setIngresoMensual] = useState("");
@@ -14,6 +13,19 @@ function FormSocioeconomico() {
   const [otrasDeudas, setOtrasDeudas] = useState("0");
   const [gastosMensuales, setGastosMensuales] = useState("");
   const [aceptaTerminos, setAceptaTerminos] = useState(false);
+
+  // Estados para el tipo de préstamo y campos adicionales
+  const [showModal, setShowModal] = useState(true);
+  const [loanType, setLoanType] = useState(null); // 'personal', 'negocio', 'hipotecario'
+
+  // Campos para préstamo de negocio
+  const [rubro, setRubro] = useState("");
+  const [mesesFuncionando, setMesesFuncionando] = useState("");
+
+  // Campos para préstamo hipotecario
+  const [valorPropiedad, setValorPropiedad] = useState("");
+  const [direccionPropiedad, setDireccionPropiedad] = useState("");
+  const [tipoPropiedad, setTipoPropiedad] = useState("");
 
   // Estados de control
   const [errores, setErrores] = useState([]);
@@ -78,6 +90,24 @@ function FormSocioeconomico() {
       errs.push("Otras deudas debe ser un número.");
     }
 
+    // Validaciones según tipo de préstamo
+    if (loanType === "negocio") {
+      if (!rubro) errs.push("El rubro del negocio es obligatorio.");
+      if (!mesesFuncionando) errs.push("Los meses funcionando son obligatorios.");
+      if (mesesFuncionando && isNaN(Number(mesesFuncionando))) {
+        errs.push("Los meses funcionando deben ser un número.");
+      }
+    }
+
+    if (loanType === "hipotecario") {
+      if (!valorPropiedad) errs.push("El valor de la propiedad es obligatorio.");
+      if (valorPropiedad && isNaN(Number(valorPropiedad))) {
+        errs.push("El valor de la propiedad debe ser un número.");
+      }
+      if (!direccionPropiedad) errs.push("La dirección de la propiedad es obligatoria.");
+      if (!tipoPropiedad) errs.push("El tipo de propiedad es obligatorio.");
+    }
+
     setErrores(errs);
     return errs.length === 0;
   };
@@ -96,8 +126,19 @@ function FormSocioeconomico() {
       ingresoMensual: Number(ingresoMensual) || 0,
       mesesLaborando: Number(mesesLaborando) || 0,
       otrasDeudas: Number(otrasDeudas) || 0,
-      gastosMensuales: Number(gastosMensuales) || 0
+      gastosMensuales: Number(gastosMensuales) || 0,
+      tipoPrestamo: loanType,
     };
+
+    // Agregar campos específicos según el tipo
+    if (loanType === "negocio") {
+      payload.rubro = rubro;
+      payload.mesesFuncionando = Number(mesesFuncionando) || 0;
+    } else if (loanType === "hipotecario") {
+      payload.valorPropiedad = Number(valorPropiedad) || 0;
+      payload.direccionPropiedad = direccionPropiedad;
+      payload.tipoPropiedad = tipoPropiedad;
+    }
 
     console.log("📤 Enviando payload:", JSON.stringify(payload, null, 2));
 
@@ -126,10 +167,15 @@ function FormSocioeconomico() {
     }
   };
 
+  const handleSelectLoanType = (type) => {
+    setLoanType(type);
+    setShowModal(false);
+  };
+
   if (cargando) {
     return (
       <div className="socio-wrapper">
-        <div className="socio-card" style={{ padding: "40px", textAlign: "center" }}>
+        <div className="socio-card loading-card">
           <p>Cargando...</p>
         </div>
       </div>
@@ -138,6 +184,49 @@ function FormSocioeconomico() {
 
   return (
     <div className="socio-wrapper">
+      {/* Modal de selección de préstamo */}
+      {showModal && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0,0,0,0.5)',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          zIndex: 1000
+        }}>
+          <div className="socio-card" style={{ maxWidth: '400px', padding: '24px' }}>
+            <h3 style={{ marginTop: 0, color: '#064E48' }}>¿Qué tipo de préstamo busca?</h3>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '20px' }}>
+              <button
+                className="btn-opcion"
+                onClick={() => handleSelectLoanType('personal')}
+                style={{ width: '100%', padding: '12px' }}
+              >
+                Préstamo Personal
+              </button>
+              <button
+                className="btn-opcion"
+                onClick={() => handleSelectLoanType('negocio')}
+                style={{ width: '100%', padding: '12px' }}
+              >
+                Préstamo de Negocio
+              </button>
+              <button
+                className="btn-opcion"
+                onClick={() => handleSelectLoanType('hipotecario')}
+                style={{ width: '100%', padding: '12px' }}
+              >
+                Préstamo Hipotecario
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="socio-card">
         <div className="socio-header">
           <div className="progress-bar">
@@ -145,14 +234,19 @@ function FormSocioeconomico() {
           </div>
           <h2>Datos Socioeconómicos</h2>
           <p>Paso 3 de 4 — Completa tu información económica.</p>
+          {loanType && (
+            <div style={{ marginTop: '8px', fontSize: '12px', color: '#2DC653' }}>
+              Préstamo seleccionado: <strong>{loanType === 'personal' ? 'Personal' : loanType === 'negocio' ? 'Negocio' : 'Hipotecario'}</strong>
+            </div>
+          )}
         </div>
 
         <form onSubmit={handleSubmit}>
           <div className="socio-body">
-            {/* Nivel de estudios */}
+            {/* Campos base */}
             <div className="row">
-              <div className="field">
-                <label>Nivel de Estudios <span className="req">*</span></label>
+              <div className="campo">
+                <label>Nivel de Estudios <span className="required">*</span></label>
                 <select 
                   value={nivelEstudios} 
                   onChange={e => setNivelEstudios(e.target.value)}
@@ -168,8 +262,8 @@ function FormSocioeconomico() {
                   <option>Posgrado</option>
                 </select>
               </div>
-              <div className="field">
-                <label>Situación Laboral <span className="req">*</span></label>
+              <div className="campo">
+                <label>Situación Laboral <span className="required">*</span></label>
                 <select 
                   value={situacionLaboral} 
                   onChange={e => setSituacionLaboral(e.target.value)}
@@ -187,22 +281,24 @@ function FormSocioeconomico() {
               </div>
             </div>
 
-            {/* Ingreso y meses */}
             <div className="row">
-              <div className="field">
-                <label>Ingreso Mensual ($) <span className="req">*</span></label>
-                <input 
-                  type="number" 
-                  value={ingresoMensual} 
-                  onChange={e => setIngresoMensual(e.target.value)} 
-                  min="0" 
-                  step="0.01"
-                  placeholder="0.00"
-                  disabled={enviando}
-                />
+              <div className="campo">
+                <label>Ingreso Mensual ($) <span className="required">*</span></label>
+                <div className="input-con-icono">
+                  <span className="icono-moneda">$</span>
+                  <input 
+                    type="number" 
+                    value={ingresoMensual} 
+                    onChange={e => setIngresoMensual(e.target.value)} 
+                    min="0" 
+                    step="0.01"
+                    placeholder="0.00"
+                    disabled={enviando}
+                  />
+                </div>
               </div>
-              <div className="field">
-                <label>Meses Laborando <span className="req">*</span></label>
+              <div className="campo">
+                <label>Meses Laborando <span className="required">*</span></label>
                 <input 
                   type="number" 
                   value={mesesLaborando} 
@@ -214,57 +310,153 @@ function FormSocioeconomico() {
               </div>
             </div>
 
-            {/* Gastos y deudas */}
             <div className="row">
-              <div className="field">
-                <label>Gastos Mensuales ($) <span className="req">*</span></label>
-                <input 
-                  type="number" 
-                  value={gastosMensuales} 
-                  onChange={e => setGastosMensuales(e.target.value)} 
-                  min="0" 
-                  step="0.01"
-                  placeholder="0.00"
-                  disabled={enviando}
-                />
+              <div className="campo">
+                <label>Gastos Mensuales ($) <span className="required">*</span></label>
+                <div className="input-con-icono">
+                  <span className="icono-moneda">$</span>
+                  <input 
+                    type="number" 
+                    value={gastosMensuales} 
+                    onChange={e => setGastosMensuales(e.target.value)} 
+                    min="0" 
+                    step="0.01"
+                    placeholder="0.00"
+                    disabled={enviando}
+                  />
+                </div>
               </div>
-              <div className="field">
+              <div className="campo">
                 <label>Otras Deudas ($)</label>
-                <input 
-                  type="number" 
-                  value={otrasDeudas} 
-                  onChange={e => setOtrasDeudas(e.target.value)} 
-                  min="0" 
-                  step="0.01"
-                  placeholder="0.00"
-                  disabled={enviando}
-                />
-                <span className="hint">Opcional</span>
+                <div className="input-con-icono">
+                  <span className="icono-moneda">$</span>
+                  <input 
+                    type="number" 
+                    value={otrasDeudas} 
+                    onChange={e => setOtrasDeudas(e.target.value)} 
+                    min="0" 
+                    step="0.01"
+                    placeholder="0.00"
+                    disabled={enviando}
+                  />
+                </div>
+                <span className="ayuda-texto">Opcional</span>
               </div>
             </div>
 
-            {/* Términos */}
-            <div className="check-row">
-              <input 
-                type="checkbox" 
-                checked={aceptaTerminos} 
-                onChange={e => setAceptaTerminos(e.target.checked)} 
-                disabled={enviando}
-              />
-              <p>Acepto los Términos y Condiciones. <span className="req">*</span></p>
+            {/* Campos adicionales según tipo de préstamo */}
+            {loanType === 'negocio' && (
+              <>
+                <hr style={{ margin: '24px 0 16px', border: '1px solid #f0f0f0' }} />
+                <h4 style={{ margin: '0 0 16px', color: '#064E48', fontSize: '14px', fontWeight: 700 }}>
+                  Datos del Negocio
+                </h4>
+                <div className="row">
+                  <div className="campo">
+                    <label>Rubro <span className="required">*</span></label>
+                    <input
+                      type="text"
+                      value={rubro}
+                      onChange={e => setRubro(e.target.value)}
+                      placeholder="Ej. Restaurante, Tienda, Servicios..."
+                      disabled={enviando}
+                    />
+                  </div>
+                  <div className="campo">
+                    <label>Meses funcionando <span className="required">*</span></label>
+                    <input
+                      type="number"
+                      value={mesesFuncionando}
+                      onChange={e => setMesesFuncionando(e.target.value)}
+                      min="0"
+                      placeholder="0"
+                      disabled={enviando}
+                    />
+                  </div>
+                </div>
+              </>
+            )}
+
+            {loanType === 'hipotecario' && (
+              <>
+                <hr style={{ margin: '24px 0 16px', border: '1px solid #f0f0f0' }} />
+                <h4 style={{ margin: '0 0 16px', color: '#064E48', fontSize: '14px', fontWeight: 700 }}>
+                  Datos Hipotecarios
+                </h4>
+                <div className="row">
+                  <div className="campo">
+                    <label>Valor de la propiedad ($) <span className="required">*</span></label>
+                    <div className="input-con-icono">
+                      <span className="icono-moneda">$</span>
+                      <input
+                        type="number"
+                        value={valorPropiedad}
+                        onChange={e => setValorPropiedad(e.target.value)}
+                        min="0"
+                        step="0.01"
+                        placeholder="0.00"
+                        disabled={enviando}
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div className="row">
+                  <div className="campo">
+                    <label>Dirección de la propiedad <span className="required">*</span></label>
+                    <input
+                      type="text"
+                      value={direccionPropiedad}
+                      onChange={e => setDireccionPropiedad(e.target.value)}
+                      placeholder="Calle, número, colonia, ciudad..."
+                      disabled={enviando}
+                    />
+                  </div>
+                </div>
+                <div className="row">
+                  <div className="campo">
+                    <label>Tipo de propiedad <span className="required">*</span></label>
+                    <select
+                      value={tipoPropiedad}
+                      onChange={e => setTipoPropiedad(e.target.value)}
+                      disabled={enviando}
+                    >
+                      <option value="">-- Selecciona --</option>
+                      <option>Casa</option>
+                      <option>Departamento</option>
+                      <option>Terreno</option>
+                      <option>Local comercial</option>
+                      <option>Otro</option>
+                    </select>
+                  </div>
+                </div>
+              </>
+            )}
+
+            {/* Checkbox de términos */}
+            <div className={`campo-checkbox ${!aceptaTerminos && errores.includes('Debes aceptar los términos y condiciones.') ? 'campo-error' : ''}`}>
+              <label className="checkbox-label">
+                <input 
+                  type="checkbox" 
+                  checked={aceptaTerminos} 
+                  onChange={e => setAceptaTerminos(e.target.checked)} 
+                  disabled={enviando}
+                />
+                <span>Acepto los <a href="/terminos" target="_blank">Términos y Condiciones</a>. <span className="required">*</span></span>
+              </label>
             </div>
 
             {/* Errores */}
             {errores.length > 0 && (
-              <div className="error-list">
-                {errores.map((err, i) => <p key={i}>• {err}</p>)}
+              <div className="error-list" style={{ marginTop: '16px' }}>
+                {errores.map((err, i) => <p key={i} className="error-mensaje">• {err}</p>)}
               </div>
             )}
             
             {/* Mensaje del servidor */}
             {mensajeServidor && (
-              <div className="server-message">
-                {mensajeServidor}
+              <div className={`mensaje-servidor ${mensajeServidor.includes('exitoso') ? 'exito' : 'error'}`}>
+                <span className="mensaje-icono">{mensajeServidor.includes('exitoso') ? '' : ''}</span>
+                <span className="mensaje-texto">{mensajeServidor}</span>
               </div>
             )}
           </div>
@@ -282,9 +474,13 @@ function FormSocioeconomico() {
             <button 
               type="submit" 
               className="btn-submit" 
-              disabled={enviando}
+              disabled={enviando || !loanType}
             >
-              {enviando ? "Guardando..." : "Continuar →"}
+              {enviando ? (
+                <>
+                  <span className="spinner-small"></span> Guardando...
+                </>
+              ) : "Continuar →"}
             </button>
           </div>
         </form>
