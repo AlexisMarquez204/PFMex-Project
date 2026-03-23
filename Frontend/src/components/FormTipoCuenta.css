@@ -426,3 +426,629 @@
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
+.modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            animation: fadeIn 0.3s ease;
+          }
+          
+          .modal-container {
+            background: white;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.3s ease;
+          }
+          
+          .modal-header {
+            text-align: center;
+            margin-bottom: 30px;
+          }
+          
+          .modal-header h2 {
+            color: #064E48;
+            margin-top: 20px;
+          }
+          
+          .calculating-icon {
+            position: relative;
+            width: 80px;
+            height: 80px;
+            margin: 0 auto;
+          }
+          
+          .pulse-ring {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(45, 198, 83, 0.3);
+            border-radius: 50%;
+            animation: pulse 1.5s ease-out infinite;
+          }
+          
+          .calculator-icon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 40px;
+          }
+          
+          .calculating-text {
+            text-align: center;
+            color: #666;
+            margin-bottom: 25px;
+          }
+          
+          .progress-container {
+            margin: 20px 0;
+          }
+          
+          .progress-bar-custom {
+            width: 100%;
+            height: 8px;
+            background: #f0f0f0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 15px;
+          }
+          
+          .progress-fill-custom {
+            height: 100%;
+            background: linear-gradient(90deg, #2DC653, #0D7A73);
+            transition: width 0.3s ease;
+          }
+          
+          .time-remaining {
+            text-align: center;
+            font-size: 14px;
+            color: #666;
+          }
+          
+          .timer-icon {
+            margin-right: 5px;
+          }
+          
+          .analysis-steps {
+            margin-top: 30px;
+          }
+          
+          .step {
+            display: flex;
+            align-items: center;
+            padding: 8px 0;
+            color: #999;
+            transition: color 0.3s ease;
+          }
+          
+          .step.completed {
+            color: #2DC653;
+          }
+          
+          .step-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            background: #f0f0f0;
+            border-radius: 50%;
+            margin-right: 12px;
+            font-size: 12px;
+          }
+          
+          .step.completed .step-icon {
+            background: #2DC653;
+            color: white;
+          }
+          
+          .result {
+            text-align: center;
+          }
+          
+          .success-icon {
+            font-size: 60px;
+            animation: bounce 0.5s ease;
+          }
+          
+          .monto-container {
+            margin: 20px 0;
+          }
+          
+          .monto-label {
+            font-size: 14px;
+            color: #666;
+            display: block;
+          }
+          
+          .monto-value {
+            font-size: 36px;
+            font-weight: bold;
+            color: #2DC653;
+            margin-top: 10px;
+          }
+          
+          .detalles-calculo {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: left;
+          }
+          
+          .detalles-calculo h3 {
+            color: #064E48;
+            margin-bottom: 15px;
+            font-size: 16px;
+          }
+          
+          .puntaje {
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e0e0e0;
+          }
+          
+          .razones-lista {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+          }
+          
+          .razones-lista li {
+            padding: 5px 0;
+            font-size: 13px;
+            color: #555;
+            position: relative;
+            padding-left: 20px;
+          }
+          
+          .razones-lista li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #2DC653;
+          }
+          
+          .redirect-message {
+            font-size: 12px;
+            color: #999;
+            margin-top: 20px;
+          }
+          
+          @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+          }
+          
+          @keyframes slideUp {
+            from {
+              transform: translateY(50px);
+              opacity: 0;
+            }
+            to {
+              transform: translateY(0);
+              opacity: 1;
+            }
+          }
+          
+          @keyframes pulse {
+            0% {
+              transform: scale(1);
+              opacity: 1;
+            }
+            100% {
+              transform: scale(1.5);
+              opacity: 0;
+            }
+          }
+          
+          @keyframes bounce {
+            0%, 100% {
+              transform: translateY(0);
+            }
+            50% {
+              transform: translateY(-10px);
+            }
+          }
+          /* Estilos para tipo de préstamo */
+.tipo-prestamo-group {
+    margin-bottom: 25px;
+}
+
+.prestamo-options {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+}
+
+.prestamo-option {
+    flex: 1;
+    min-width: 150px;
+    padding: 15px;
+    border: 2px solid #e0e0e0;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.prestamo-option.selected {
+    border-color: #2DC653;
+    background: #f0fff4;
+}
+
+.prestamo-option input {
+    display: none;
+}
+
+.prestamo-info {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.prestamo-nombre {
+    font-weight: bold;
+    font-size: 16px;
+    color: #064E48;
+}
+
+.prestamo-rango {
+    font-size: 12px;
+    color: #666;
+}
+
+.prestamo-tasa {
+    font-size: 12px;
+    color: #2DC653;
+    font-weight: 500;
+}
+
+/* Estilos para el control de monto */
+.monto-group {
+    margin-bottom: 25px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 12px;
+}
+
+.monto-control {
+    margin-top: 15px;
+}
+
+.monto-slider {
+    width: 100%;
+    height: 4px;
+    background: #e0e0e0;
+    border-radius: 2px;
+    -webkit-appearance: none;
+    margin-bottom: 20px;
+}
+
+.monto-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    background: #2DC653;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.monto-input-group {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.monto-number {
+    width: 200px;
+    padding: 10px;
+    font-size: 18px;
+    text-align: center;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+
+.monto-info {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 15px;
+}
+
+.pago-mensual-info {
+    text-align: center;
+    padding: 10px;
+    background: white;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+.pago-mensual-info strong {
+    color: #2DC653;
+    font-size: 18px;
+}
+
+.info-small {
+    display: block;
+    font-size: 11px;
+    color: #999;
+    margin-top: 5px;
+}
+/* Estilos para tipo de préstamo */
+.tipo-prestamo-group {
+    margin-bottom: 25px;
+}
+
+.prestamo-options {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+}
+
+.prestamo-option {
+    flex: 1;
+    min-width: 150px;
+    padding: 15px;
+    border: 2px solid #e0e0e0;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.prestamo-option.selected {
+    border-color: #2DC653;
+    background: #f0fff4;
+}
+
+.prestamo-option input {
+    display: none;
+}
+
+.prestamo-info {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.prestamo-nombre {
+    font-weight: bold;
+    font-size: 16px;
+    color: #064E48;
+}
+
+.prestamo-rango {
+    font-size: 12px;
+    color: #666;
+}
+
+.prestamo-tasa {
+    font-size: 12px;
+    color: #2DC653;
+    font-weight: 500;
+}
+
+/* Estilos para el control de monto */
+.monto-group {
+    margin-bottom: 25px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 12px;
+}
+
+.monto-control {
+    margin-top: 15px;
+}
+
+.monto-slider {
+    width: 100%;
+    height: 4px;
+    background: #e0e0e0;
+    border-radius: 2px;
+    -webkit-appearance: none;
+    margin-bottom: 20px;
+}
+
+.monto-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    background: #2DC653;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.monto-input-group {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.monto-number {
+    width: 200px;
+    padding: 10px;
+    font-size: 18px;
+    text-align: center;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+
+.monto-info {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 15px;
+}
+
+.pago-mensual-info {
+    text-align: center;
+    padding: 10px;
+    background: white;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+.pago-mensual-info strong {
+    color: #2DC653;
+    font-size: 18px;
+}
+
+.info-small {
+    display: block;
+    font-size: 11px;
+    color: #999;
+    margin-top: 5px;
+}
+/* Estilos para tipo de préstamo */
+.tipo-prestamo-group {
+    margin-bottom: 25px;
+}
+
+.prestamo-options {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+}
+
+.prestamo-option {
+    flex: 1;
+    min-width: 150px;
+    padding: 15px;
+    border: 2px solid #e0e0e0;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.prestamo-option.selected {
+    border-color: #2DC653;
+    background: #f0fff4;
+}
+
+.prestamo-option input {
+    display: none;
+}
+
+.prestamo-info {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.prestamo-nombre {
+    font-weight: bold;
+    font-size: 16px;
+    color: #064E48;
+}
+
+.prestamo-rango {
+    font-size: 12px;
+    color: #666;
+}
+
+.prestamo-tasa {
+    font-size: 12px;
+    color: #2DC653;
+    font-weight: 500;
+}
+
+/* Estilos para el control de monto */
+.monto-group {
+    margin-bottom: 25px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 12px;
+}
+
+.monto-control {
+    margin-top: 15px;
+}
+
+.monto-slider {
+    width: 100%;
+    height: 4px;
+    background: #e0e0e0;
+    border-radius: 2px;
+    -webkit-appearance: none;
+    margin-bottom: 20px;
+}
+
+.monto-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    background: #2DC653;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.monto-input-group {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.monto-number {
+    width: 200px;
+    padding: 10px;
+    font-size: 18px;
+    text-align: center;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+
+.monto-info {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 15px;
+}
+
+.pago-mensual-info {
+    text-align: center;
+    padding: 10px;
+    background: white;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+.pago-mensual-info strong {
+    color: #2DC653;
+    font-size: 18px;
+}
+
+.info-small {
+    display: block;
+    font-size: 11px;
+    color: #999;
+    margin-top: 5px;
+}
+
+.loading-message {
+    text-align: center;
+    padding: 20px;
+    color: #666;
+}

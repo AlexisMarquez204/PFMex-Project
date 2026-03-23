@@ -7,6 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.servlet.http.HttpSession;
+import java.util.HashMap;
+import java.util.Map;
 
 @CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
 @RestController
@@ -49,6 +51,68 @@ public class DatosPersonalesController {
             return ResponseEntity.ok("Información guardada correctamente en ambas tablas.");
         } else {
             return ResponseEntity.status(500).body("Error crítico al guardar en la base de datos.");
+        }
+    }
+    
+    // Nuevo endpoint GET para obtener datos personales
+    @GetMapping("/usuario/{idUsuario}")
+    public ResponseEntity<?> obtenerDatosPersonales(@PathVariable Integer idUsuario, HttpSession session) {
+        
+        System.out.println("\n=== GET /datos-personales-completo/usuario/" + idUsuario + " ===");
+        
+        try {
+            Integer idSesion = (Integer) session.getAttribute("idUsuario");
+            if (idSesion == null) {
+                return ResponseEntity.status(401).body(Map.of("success", false, "mensaje", "No hay sesión activa"));
+            }
+            
+            if (!idUsuario.equals(idSesion)) {
+                return ResponseEntity.status(403).body(Map.of("success", false, "mensaje", "No autorizado"));
+            }
+            
+            Map<String, Object> datos = dao.obtenerDatosCompletosPorUsuario(idUsuario);
+            
+            if (!datos.isEmpty()) {
+                Map<String, Object> response = new HashMap<>();
+                response.put("success", true);
+                response.put("data", datos);
+                return ResponseEntity.ok(response);
+            } else {
+                return ResponseEntity.status(404).body(Map.of("success", false, "mensaje", "Datos no encontrados"));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body(Map.of("success", false, "mensaje", e.getMessage()));
+        }
+    }
+    
+    // Endpoint para actualizar teléfono
+    @PutMapping("/telefono")
+    public ResponseEntity<?> actualizarTelefono(@RequestBody Map<String, String> payload, HttpSession session) {
+        
+        System.out.println("\n=== PUT /datos-personales-completo/telefono ===");
+        
+        try {
+            Integer idSesion = (Integer) session.getAttribute("idUsuario");
+            if (idSesion == null) {
+                return ResponseEntity.status(401).body(Map.of("success", false, "mensaje", "No hay sesión activa"));
+            }
+            
+            String telefono = payload.get("telefono");
+            if (telefono == null || telefono.length() != 10) {
+                return ResponseEntity.badRequest().body(Map.of("success", false, "mensaje", "Teléfono inválido"));
+            }
+            
+            boolean exito = dao.actualizarTelefono(idSesion, telefono);
+            
+            if (exito) {
+                return ResponseEntity.ok(Map.of("success", true, "mensaje", "Teléfono actualizado correctamente"));
+            } else {
+                return ResponseEntity.status(500).body(Map.of("success", false, "mensaje", "Error al actualizar teléfono"));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body(Map.of("success", false, "mensaje", e.getMessage()));
         }
     }
 }
